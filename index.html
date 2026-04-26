@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hania666 — Web3 Game Developer</title>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080b11;
+      --surface:   #0d1117;
+      --border:    #1e2a3a;
+      --accent1:   #7c3aed;   /* violet */
+      --accent2:   #06b6d4;   /* cyan   */
+      --accent3:   #10b981;   /* emerald */
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --card-bg:   #0f1923;
+      --glow1: rgba(124, 58, 237, 0.35);
+      --glow2: rgba(6, 182, 212, 0.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Glow orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+    }
+    .orb-1 {
+      width: 520px; height: 520px;
+      background: var(--accent1);
+      top: -160px; left: -120px;
+    }
+    .orb-2 {
+      width: 420px; height: 420px;
+      background: var(--accent2);
+      bottom: 10%; right: -140px;
+    }
+    .orb-3 {
+      width: 280px; height: 280px;
+      background: var(--accent3);
+      top: 55%; left: 42%;
+      opacity: 0.25;
+    }
+
+    /* ── Layout ── */
+    main { position: relative; z-index: 1; }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 0;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(8, 11, 17, 0.7);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav .inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 110px 0 90px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(124,58,237,.4);
+      background: rgba(124,58,237,.08);
+      font-size: 0.78rem;
+      color: #a78bfa;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent3);
+      box-shadow: 0 0 6px var(--accent3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 .name {
+      background: linear-gradient(135deg, #fff 20%, var(--accent2) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .hero-subtitle span {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent1), #4f46e5);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 24px rgba(124,58,237,.4);
+    }
+
+    .hero-cta:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(124,58,237,.55);
+    }
+
+    .hero-cta svg { flex-shrink: 0; }
+
+    /* ── Section shared ── */
+    section { padding: 80px 0; }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 40px;
+    }
+
+    /* ── Stack ── */
+    #stack { border-top: 1px solid var(--border); }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .stack-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .stack-card:hover {
+      border-color: var(--accent1);
+      transform: translateY(-3px);
+    }
+
+    .stack-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .stack-card .info { display: flex; flex-direction: column; gap: 2px; }
+    .stack-card .label { font-size: 0.95rem; font-weight: 600; }
+    .stack-card .sublabel { font-size: 0.75rem; color: var(--muted); }
+
+    /* stack icon colours */
+    .ic-react   { background: rgba(6,182,212,.12);  color: #22d3ee; }
+    .ic-ts      { background: rgba(59,130,246,.12); color: #60a5fa; }
+    .ic-sol     { background: rgba(124,58,237,.12); color: #a78bfa; }
+    .ic-solana  { background: rgba(16,185,129,.12); color: #34d399; }
+    .ic-supa    { background: rgba(16,185,129,.12); color: #34d399; }
+
+    /* ── Projects ── */
+    #projects { border-top: 1px solid var(--border); }
+
+    .projects-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .project-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent1);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(124,58,237,.2);
+    }
+
+    .project-chain {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .chain-abstract {
+      background: rgba(124,58,237,.15);
+      color: #a78bfa;
+      border: 1px solid rgba(124,58,237,.3);
+    }
+
+    .chain-solana {
+      background: rgba(16,185,129,.12);
+      color: #34d399;
+      border: 1px solid rgba(16,185,129,.25);
+    }
+
+    .chain-mobile {
+      background: rgba(6,182,212,.12);
+      color: #22d3ee;
+      border: 1px solid rgba(6,182,212,.25);
+    }
+
+    .chain-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .project-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .project-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .project-arrow {
+      color: var(--muted);
+      transition: color 0.2s, transform 0.2s;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .project-card:hover .project-arrow {
+      color: var(--accent2);
+      transform: translate(3px, -3px);
+    }
+
+    /* ── Chains section ── */
+    #chains { border-top: 1px solid var(--border); }
+
+    .chains-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .chain-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      flex: 1 1 220px;
+      transition: border-color 0.2s;
+    }
+
+    .chain-badge:hover { border-color: var(--accent2); }
+
+    .chain-logo {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .cl-abstract { background: rgba(124,58,237,.15); }
+    .cl-solana   { background: rgba(16,185,129,.12); }
+
+    .chain-info .name  { font-size: 1rem; font-weight: 700; }
+    .chain-info .desc  { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    .footer-gh {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .footer-gh:hover {
+      border-color: var(--accent2);
+      background: rgba(6,182,212,.06);
+      text-decoration: none;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .project-card { grid-template-columns: 1fr; }
+      .hero { padding: 80px 0 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Ambient orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="inner">
+    <span class="nav-logo">hania666</span>
+    <ul class="nav-links">
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#chains">Chains</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Open to collaborations
+      </div>
+      <h1><span class="name">hania666</span></h1>
+      <p class="hero-subtitle">
+        Web3 Game Developer building <span>mobile & browser games</span>
+        on Solana and Abstract Chain
+      </p>
+      <a class="hero-cta" href="https://github.com/hania666" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        View GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- Stack -->
+  <section id="stack">
+    <div class="container">
+      <p class="section-label">Tech Stack</p>
+      <h2 class="section-title">Tools &amp; Technologies</h2>
+      <div class="stack-grid">
+
+        <div class="stack-card">
+          <div class="stack-icon ic-react">⚛</div>
+          <div class="info">
+            <span class="label">React Native</span>
+            <span class="sublabel">Mobile apps</span>
+          </div>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-icon ic-ts">
+            <svg width="22" height="22" viewBox="0 0 400 400" fill="none">
+              <rect width="400" height="400" rx="20" fill="#3178C6"/>
+              <path d="M87.7 200.7V217h52v148h36.9V217h52v-16.6c0-9.1.2-16.7-.4-16.7-17.2 0-137.3 0-140.5.7v16z" fill="#fff"/>
+              <path d="M321.1 184c-10.2-2.4-23-3.6-35.6-3.3-12.5.2-23.8 1.6-32.3 5.2-8.5 3.6-15.4 9-20.4 16.3-5 7.3-7.5 16.1-7.5 26.4 0 10.3 2.7 19.6 8.1 27.8 5.4 8.2 13.2 14.3 23.3 18.3 10.1 4 21.5 6.1 34.2 6.2 13.2.1 24.2-1.2 33.1-4V259c-8 2.6-17.4 3.9-28.3 3.9-9.3 0-17-1.8-23.1-5.4-6.1-3.6-9.3-8.8-9.6-15.6l-.1-1.5h73.6c.1-1.5.1-3.6.1-6.3 0-10.7-2.3-19.8-6.8-27.3-4.5-7.5-10.6-13-18.7-16.8zm-35.2 13.9c6.7 0 11.6 1.8 14.7 5.4 3.1 3.6 4.6 8.8 4.5 15.6l-.1 1h-41.3c.4-6.7 2.4-11.7 6.1-15 3.7-3.3 9-5 16.1-5z" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="info">
+            <span class="label">TypeScript</span>
+            <span class="sublabel">Primary language</span>
+          </div>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-icon ic-sol">◈</div>
+          <div class="info">
+            <span class="label">Solidity</span>
+            <span class="sublabel">Smart contracts</span>
+          </div>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-icon ic-solana">◎</div>
+          <div class="info">
+            <span class="label">Solana</span>
+            <span class="sublabel">On-chain programs</span>
+          </div>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-icon ic-supa">⚡</div>
+          <div class="info">
+            <span class="label">Supabase</span>
+            <span class="sublabel">Backend & real-time</span>
+          </div>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-icon ic-react">📱</div>
+          <div class="info">
+            <span class="label">Expo</span>
+            <span class="sublabel">Cross-platform</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container">
+      <p class="section-label">Work</p>
+      <h2 class="section-title">Projects</h2>
+      <div class="projects-grid">
+
+        <!-- seabattle -->
+        <a class="project-card" href="https://github.com/hania666/seabattle" target="_blank" rel="noopener">
+          <div>
+            <div class="project-chain chain-abstract">
+              <span class="chain-dot"></span>Abstract Chain
+            </div>
+            <div class="project-name">⚓ Sea Battle</div>
+            <div class="project-desc">
+              Classic Battleship reimagined on Abstract Chain. Features Solidity smart contracts
+              for on-chain game logic and a React frontend — every shot fired and every ship sunk
+              is settled trustlessly on-chain.
+            </div>
+            <div class="project-tags">
+              <span class="tag">Solidity</span>
+              <span class="tag">React</span>
+              <span class="tag">TypeScript</span>
+              <span class="tag">Abstract Chain</span>
+              <span class="tag">Smart Contracts</span>
+            </div>
+          </div>
+          <svg class="project-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+          </svg>
+        </a>
+
+        <!-- 2048-battle -->
+        <a class="project-card" href="https://github.com/hania666/2048-battle" target="_blank" rel="noopener">
+          <div>
+            <div class="project-chain chain-mobile">
+              <span class="chain-dot"></span>Google Play
+            </div>
+            <div class="project-name">🎮 2048 Battle</div>
+            <div class="project-desc">
+              Real-time PvP 2048 on mobile — two players race to reach the highest tile first.
+              Built with React Native and Expo for a seamless cross-platform experience,
+              deployed on Google Play.
+            </div>
+            <div class="project-tags">
+              <span class="tag">React Native</span>
+              <span class="tag">Expo</span>
+              <span class="tag">TypeScript</span>
+              <span class="tag">Real-time PvP</span>
+              <span class="tag">Google Play</span>
+            </div>
+          </div>
+          <svg class="project-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+          </svg>
+        </a>
+
+        <!-- diceduel -->
+        <a class="project-card" href="https://github.com/hania666/diceduel2203" target="_blank" rel="noopener">
+          <div>
+            <div class="project-chain chain-solana">
+              <span class="chain-dot"></span>Solana
+            </div>
+            <div class="project-name">🎲 Dice Duel</div>
+            <div class="project-desc">
+              On-chain dice game running on Solana. Players wager and roll against each other
+              with provably fair randomness enforced by the program. Built as a mobile-first
+              experience with React Native.
+            </div>
+            <div class="project-tags">
+              <span class="tag">Solana</span>
+              <span class="tag">React Native</span>
+              <span class="tag">TypeScript</span>
+              <span class="tag">On-chain RNG</span>
+            </div>
+          </div>
+          <svg class="project-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+          </svg>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Chains -->
+  <section id="chains">
+    <div class="container">
+      <p class="section-label">Ecosystem</p>
+      <h2 class="section-title">Chains I build on</h2>
+      <div class="chains-row">
+
+        <div class="chain-badge">
+          <div class="chain-logo cl-abstract">🟣</div>
+          <div class="chain-info">
+            <div class="name">Abstract Chain</div>
+            <div class="desc">EVM L2 · Solidity smart contracts</div>
+          </div>
+        </div>
+
+        <div class="chain-badge">
+          <div class="chain-logo cl-solana">◎</div>
+          <div class="chain-info">
+            <div class="name">Solana</div>
+            <div class="desc">High-speed L1 · Rust &amp; Anchor programs</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>Built by <a href="https://github.com/hania666" target="_blank" rel="noopener">hania666</a></p>
+    <br>
+    <a class="footer-gh" href="https://github.com/hania666" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+      github.com/hania666
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>
