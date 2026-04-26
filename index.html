@@ -425,6 +425,55 @@
     .chain-info .name  { font-size: 1rem; font-weight: 700; }
     .chain-info .desc  { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
 
+    /* ── Contact ── */
+    #contact { border-top: 1px solid var(--border); }
+
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 28px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      flex: 1 1 220px;
+      max-width: 300px;
+    }
+
+    .contact-link:hover {
+      border-color: var(--accent2);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(6,182,212,.15);
+    }
+
+    .contact-link .contact-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      background: rgba(6,182,212,.1);
+      color: var(--accent2);
+    }
+
+    .contact-link .contact-info { display: flex; flex-direction: column; gap: 2px; }
+    .contact-link .contact-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .contact-link .contact-value { font-size: 0.95rem; font-weight: 600; }
+
     /* ── Footer ── */
     footer {
       border-top: 1px solid var(--border);
@@ -493,6 +542,7 @@
       <li><a href="#stack">Stack</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#chains">Chains</a></li>
+      <li><a href="#contact">Contact</a></li>
     </ul>
   </div>
 </nav>
@@ -692,6 +742,41 @@
             <div class="desc">High-speed L1 · Rust &amp; Anchor programs</div>
           </div>
         </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <p class="section-label">Get in touch</p>
+      <h2 class="section-title">Contact</h2>
+      <div class="contact-links">
+
+        <a class="contact-link" href="https://x.com/CryptoElysiummm" target="_blank" rel="noopener">
+          <div class="contact-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </div>
+          <div class="contact-info">
+            <span class="contact-label">Twitter / X</span>
+            <span class="contact-value">@CryptoElysiummm</span>
+          </div>
+        </a>
+
+        <a class="contact-link" href="mailto:cryptoelysiumm@gmail.com">
+          <div class="contact-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/>
+            </svg>
+          </div>
+          <div class="contact-info">
+            <span class="contact-label">Email</span>
+            <span class="contact-value">cryptoelysiumm@gmail.com</span>
+          </div>
+        </a>
 
       </div>
     </div>
